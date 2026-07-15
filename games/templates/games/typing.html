@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Typing Mastery - NotesForPro{% endblock %}
+
+{% block content %}
+<style>
+/* ====== Container ====== */
+.game-container { max-width: 800px; margin: 2rem auto; text-align: center; font-family: 'Segoe UI', sans-serif; }
+.game-title { font-size: 3rem; color: #22d3ee; margin-bottom: 2rem; }
+
+/* ====== Quote Display ====== */
+#quote-display { 
+    background: rgba(30,30,30,0.85); 
+    color: #e0f7fa; 
+    padding: 2rem; 
+    border-radius: 1rem; 
+    font-size: 1.5rem; 
+    min-height: 120px; 
+    margin-bottom: 1rem; 
+    line-height: 1.6;
+}
+
+/* ====== Typing Input ====== */
+#typing-input { 
+    width: 100%; 
+    padding: 1rem; 
+    font-size: 1.5rem; 
+    border-radius: 0.75rem; 
+    border: 2px solid #0e7490; 
+    background: rgba(20,20,20,0.85); 
+    color: #fff; 
+    resize: none; 
+    outline: none; 
+    margin-bottom: 1rem;
+}
+#typing-input.correct { border-color: #22c55e; }
+#typing-input.incorrect { border-color: #ef4444; }
+
+/* ====== Stats ====== */
+#stats { display: flex; justify-content: center; gap: 2rem; font-size: 1.2rem; margin-bottom: 1rem; color: #22d3ee; }
+
+/* ====== Buttons ====== */
+button { 
+    padding: 0.75rem 2rem; 
+    font-size: 1.2rem; 
+    border-radius: 0.75rem; 
+    border: none; 
+    cursor: pointer; 
+    background-color: #06b6d4; 
+    color: #fff; 
+    transition: 0.2s all; 
+    margin: 0.5rem;
+}
+button:hover { background-color: #0ea5e9; transform: scale(1.05); }
+
+/* ====== Overlay ====== */
+.overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; 
+    color: #fff; font-size: 2rem; z-index: 999; flex-direction: column; 
+}
+.overlay.hidden { display: none; }
+.overlay button { font-size: 1rem; margin-top: 1rem; }
+</style>
+
+<div class="game-container">
+    <h1 class="game-title">Typing Mastery</h1>
+
+    <div id="quote-display"></div>
+    <textarea id="typing-input" placeholder="Type the quote here..." disabled></textarea>
+
+    <div id="stats">
+        <span>WPM: <span id="wpm">0</span></span>
+        <span>Accuracy: <span id="accuracy">100</span>%</span>
+        <span>Time: <span id="timer">60</span>s</span>
+    </div>
+
+    <button id="start-btn">Start Typing Test</button>
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay hidden">
+        <div id="overlay-text"></div>
+        <button id="restart-btn">PLAY AGAIN</button>
+        <button id="menu-btn">MAIN MENU</button>
+    </div>
+</div>
+
+<script>
+const quotes = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Practice makes perfect in everything you do.",
+    "Success is the sum of small efforts repeated day in and day out.",
+    "Code is like humor. When you have to explain it, it's bad.",
+    "Keep calm and keep typing faster every day."
+];
+
+let quoteDisplay = document.getElementById('quote-display');
+let input = document.getElementById('typing-input');
+let startBtn = document.getElementById('start-btn');
+let wpmEl = document.getElementById('wpm');
+let accEl = document.getElementById('accuracy');
+let timerEl = document.getElementById('timer');
+let overlay = document.getElementById('overlay');
+let overlayText = document.getElementById('overlay-text');
+
+let startTime, timerInterval, timeLeft = 60;
+let currentQuote = "";
+
+function getRandomQuote(){
+    return quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+function getCSRFToken(){
+    let cookies = document.cookie.split(';');
+    for(let cookie of cookies){
+        let [name,value] = cookie.trim().split('=');
+        if(name==='csrftoken') return value;
+    }
+    return '';
+}
+
+function startTest(){
+    currentQuote = getRandomQuote();
+    quoteDisplay.textContent = currentQuote;
+    input.value = "";
+    input.disabled = false;
+    input.focus();
+    startBtn.disabled = true;
+    startTime = new Date();
+    timeLeft = 60;
+    timerEl.textContent = timeLeft;
+
+    input.addEventListener('input', liveCheck);
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        updateStats();
+        if(timeLeft <= 0) finishTest();
+    }, 1000);
+}
+
+function liveCheck(){
+    const typed = input.value;
+    let correct = true;
+    for(let i=0;i<typed.length;i++){
+        if(typed[i] !== currentQuote[i]) { correct=false; break; }
+    }
+    input.classList.toggle('correct', correct);
+    input.classList.toggle('incorrect', !correct);
+
+    if(typed === currentQuote) finishTest();
+}
+
+function updateStats(){
+    const typed = input.value.trim();
+    const elapsedMins = Math.max((60-timeLeft)/60, 1/60); // avoid div by zero
+    const wordsTyped = typed.split(/\s+/).filter(Boolean).length;
+    const wpm = Math.round(wordsTyped / elapsedMins);
+
+    let correctChars = 0;
+    for(let i=0;i<Math.min(typed.length,currentQuote.length);i++){
+        if(typed[i]===currentQuote[i]) correctChars++;
+    }
+    const accuracy = Math.round((correctChars / currentQuote.length) * 100);
+
+    wpmEl.textContent = wpm;
+    accEl.textContent = accuracy;
+}
+
+function finishTest(){
+    clearInterval(timerInterval);
+    input.disabled = true;
+    startBtn.disabled = false;
+    input.removeEventListener('input', liveCheck);
+
+    updateStats(); // final update
+
+    overlayText.textContent = `Test Completed! WPM: ${wpmEl.textContent} | Accuracy: ${accEl.textContent}%`;
+    overlay.classList.remove('hidden');
+
+    // Send results to Django backend
+    $.post("{% url 'games:typing_check' %}", {
+        typed: input.value,
+        time: 60-timeLeft,
+        csrfmiddlewaretoken: getCSRFToken()
+    });
+}
+
+document.getElementById('restart-btn').addEventListener('click', () => location.reload());
+document.getElementById('menu-btn').addEventListener('click', () => window.location.href='/');
+startBtn.addEventListener('click', startTest);
+</script>
+{% endblock %}

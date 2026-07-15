@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<div class="min-h-screen bg-[#0b1120] text-white flex flex-col">
+
+<!-- TITLE -->
+
+<div class="px-6 py-4">
+  <input id="noteTitle"
+    value="{{ note.title|default:'' }}"
+    placeholder="Untitled"
+    class="w-full text-3xl font-semibold bg-transparent outline-none text-gray-200">
+</div>
+
+<!-- TOOLBAR -->
+
+<div class="mx-6 mb-4 p-3 rounded-xl bg-[#111827] flex flex-wrap gap-2 items-center">
+
+<button onclick="undoAction()" class="btn">↶</button> <button onclick="redoAction()" class="btn">↷</button>
+
+<button onclick="toUpper()" class="btn">AA</button> <button onclick="toLower()" class="btn">aa</button> <button onclick="toCapitalize()" class="btn">Aa</button>
+
+<div class="divider"></div>
+
+<button onclick="format('bold')" class="btn font-bold">B</button> <button onclick="format('italic')" class="btn italic">I</button> <button onclick="format('underline')" class="btn underline">U</button>
+
+<!-- ✅ FIXED HEADINGS -->
+
+<button onclick="formatBlock('h1')" class="btn">H1</button> <button onclick="formatBlock('h2')" class="btn">H2</button>
+
+<!-- ✅ KEEP ORIGINAL LISTS -->
+
+<button onclick="format('insertUnorderedList')" class="btn">•</button> <button onclick="format('insertOrderedList')" class="btn">1.</button>
+
+<div class="divider"></div>
+
+<button onclick="format('justifyLeft')" class="btn">⬅</button> <button onclick="format('justifyCenter')" class="btn">⬆</button> <button onclick="format('justifyRight')" class="btn">➡</button>
+
+<div class="divider"></div>
+
+<select onchange="setFont(this.value)" class="dropdown">
+  <option value="">Font</option>
+  <option value="Arial">Arial</option>
+  <option value="Times New Roman">Times</option>
+  <option value="Courier New">Courier</option>
+</select>
+
+<select onchange="setFontSize(this.value)" class="dropdown">
+  <option value="">Size</option>
+  <option value="2">Small</option>
+  <option value="3">Normal</option>
+  <option value="5">Large</option>
+</select>
+
+<!-- ✅ BACKGROUND + TEXT COLOR -->
+
+<input type="color" onchange="format('foreColor', this.value)" class="color">
+<input type="color" onchange="format('hiliteColor', this.value)" class="color">
+
+<div class="divider"></div>
+
+<button onclick="insertLink()" class="btn">🔗</button> <button onclick="insertImage()" class="btn">🖼</button>
+
+<div class="ml-auto flex gap-2 items-center">
+
+<button onclick="downloadTXT()" class="btn">TXT</button>
+
+<label class="text-sm flex items-center gap-1">
+Auto
+<input type="checkbox" id="autoSaveToggle">
+</label>
+
+<button id="btnSave" class="btn-primary">💾 Save</button> <button id="btnExportPDF" class="btn-secondary">📄 PDF</button>
+
+</div>
+
+</div>
+
+<!-- EDITOR -->
+
+<div class="flex-1 px-6">
+<div id="editor"
+  contenteditable="true"
+  class="h-full min-h-[400px] p-6 rounded-xl bg-[#020617] text-gray-200">
+
+{% if note and note.content_html %}
+{{ note.content_html|safe }}
+{% else %}
+
+  <p>Start writing...</p>
+{% endif %}
+
+</div>
+</div>
+
+<!-- STATUS -->
+
+<div class="px-6 py-2 text-sm text-gray-400 flex justify-between">
+<div id="counter">Words: 0 | Characters: 0</div>
+</div>
+
+</div>
+
+<style>
+.btn { padding:6px 10px; background:#1f2937; border-radius:6px; }
+.btn:hover { background:#374151; }
+
+.btn-primary { background:#06b6d4; color:black; padding:6px 12px; border-radius:6px; }
+.btn-secondary { background:#7c3aed; padding:6px 12px; border-radius:6px; }
+
+.divider { width:1px; height:20px; background:#374151; }
+
+.dropdown { background:#1f2937; padding:4px; border-radius:6px; }
+
+.color { width:28px; height:28px; }
+
+/* KEEP LIST VISIBLE */
+#editor ul { list-style-type: disc; padding-left: 25px; }
+#editor ol { list-style-type: decimal; padding-left: 25px; }
+
+/* HEADINGS STYLE */
+#editor h1 { font-size: 28px; font-weight: bold; }
+#editor h2 { font-size: 22px; font-weight: bold; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+const NOTE_ID = "{{ note.id|default:'' }}" || null;
+const editor = document.getElementById('editor');
+const titleInput = document.getElementById('noteTitle');
+const autoToggle = document.getElementById('autoSaveToggle');
+
+let autoSaveInterval = null;
+
+function getCSRFToken() {
+  return document.cookie.split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+}
+
+function showStatus(msg, ok=true) {
+  const d = document.createElement('div');
+  d.innerText = msg;
+  d.style = `position:fixed;bottom:20px;right:20px;background:${ok?'green':'red'};color:#fff;padding:10px;border-radius:8px`;
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),2000);
+}
+
+/* CORE FORMAT */
+window.format = function(command, value=null) {
+  editor.focus();
+  document.execCommand(command, false, value);
+};
+
+/* ✅ FIXED HEADING */
+window.formatBlock = function(tag){
+  editor.focus();
+  document.execCommand("formatBlock", false, tag);
+};
+
+/* FONT */
+window.setFont = font => document.execCommand('fontName', false, font);
+window.setFontSize = size => document.execCommand('fontSize', false, size);
+
+/* UNDO REDO */
+window.undoAction = () => document.execCommand('undo');
+window.redoAction = () => document.execCommand('redo');
+
+/* CASE */
+function replaceSelection(text) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(document.createTextNode(text));
+}
+
+window.toUpper = () => {
+  const s = window.getSelection().toString();
+  if (s) replaceSelection(s.toUpperCase());
+};
+
+window.toLower = () => {
+  const s = window.getSelection().toString();
+  if (s) replaceSelection(s.toLowerCase());
+};
+
+window.toCapitalize = () => {
+  const s = window.getSelection().toString();
+  if (s) replaceSelection(s.replace(/\b\w/g, c => c.toUpperCase()));
+};
+
+/* LINK */
+window.insertLink = () => {
+  const url = prompt("Enter URL:");
+  if (url) document.execCommand('createLink', false, url);
+};
+
+/* IMAGE */
+window.insertImage = () => {
+  const url = prompt("Enter Image URL:");
+  if (url) document.execCommand('insertImage', false, url);
+};
+
+/* WORD COUNT */
+function updateWordCount(){
+  const text = editor.innerText.trim();
+  const words = text ? text.match(/\b\w+\b/g)?.length || 0 : 0;
+  const chars = text.length;
+  document.getElementById('counter').innerText =
+    `Words: ${words} | Characters: ${chars}`;
+}
+editor.addEventListener('input', updateWordCount);
+updateWordCount();
+
+/* SAVE */
+async function saveNote(){
+  const res = await fetch("/notes/save/", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "X-CSRFToken":getCSRFToken()
+    },
+    body:JSON.stringify({
+      title:titleInput.value || "Untitled",
+      content_html:editor.innerHTML,
+      note_id:NOTE_ID
+    })
+  });
+
+  const data = await res.json();
+
+  if(res.ok){
+    showStatus("Saved!");
+    if(!NOTE_ID){
+      window.location.href = `/notes/${data.note_id}/`;
+    }
+  } else {
+    showStatus("Save failed",false);
+  }
+}
+
+document.getElementById('btnSave').onclick = saveNote;
+
+/* AUTOSAVE */
+autoToggle.addEventListener('change', ()=>{
+  if(autoToggle.checked){
+    autoSaveInterval = setInterval(saveNote, 10000);
+    showStatus("AutoSave ON");
+  } else {
+    clearInterval(autoSaveInterval);
+    showStatus("AutoSave OFF");
+  }
+});
+
+/* TXT */
+window.downloadTXT = ()=>{
+  const blob = new Blob([editor.innerText], {type:"text/plain"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (titleInput.value||"note")+".txt";
+  a.click();
+};
+
+/* PDF */
+document.getElementById('btnExportPDF').onclick = async () => {
+  const { jsPDF } = window.jspdf;
+
+  const clone = editor.cloneNode(true);
+  clone.style.background = "white";
+  clone.style.color = "black";
+  clone.style.padding = "20px";
+
+  document.body.appendChild(clone);
+
+  const canvas = await html2canvas(clone, { scale: 2 });
+  document.body.removeChild(clone);
+
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF();
+  pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+  pdf.save((titleInput.value || "note") + ".pdf");
+
+  showStatus("PDF downloaded!");
+};
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}NotesForPro{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/debug.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.3.0/remixicon.min.css"/>
+    <style>
+        :root {
+            --bg:        #0d1117;
+            --sidebar:   #161b22;
+            --accent:    #00d4ff;
+            --accent-dark:#0099bb;
+            --text:      #c9d1d9;
+            --text-dim:  #8b949e;
+            --border:    rgba(0, 212, 255, 0.12);
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.18s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        .sidebar-item:hover {
+            background: rgba(0, 212, 255, 0.08);
+            color: white;
+        }
+        .sidebar-item.active {
+            background: rgba(0, 212, 255, 0.16);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        /* Collapsible sidebar classes */
+        .sidebar-collapsed { width: 0; overflow: hidden; transition: width 0.3s; }
+        .sidebar-expanded { width: 14rem; transition: width 0.3s; }
+        main { transition: margin-left 0.3s; }
+    </style>
+</head>
+<body class="flex flex-col">
+
+    <!-- Top bar -->
+    <header class="bg-[#161b22]/90 backdrop-blur-sm border-b border-[var(--border)] sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold tracking-tight bg-gradient-to-r from-[var(--accent)] to-cyan-400 bg-clip-text text-transparent">
+                NotesForPro
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="flex items-center gap-5">
+                <span class="text-sm text-[var(--text-dim)]">{{ user.username|default:"You" }}</span>
+                <a href="/logout/" class="px-4 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/40 text-red-300 text-sm transition">
+                    Logout
+                </a>
+                <!-- Sidebar toggle button -->
+                <button id="sidebar-toggle" class="px-3 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-200 text-sm transition">
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="flex flex-1">
+
+        <!-- Sidebar -->
+        {% if user.is_authenticated %}
+        <aside id="sidebar" class="sidebar-expanded bg-[var(--sidebar)] border-r border-[var(--border)] flex-shrink-0 overflow-y-auto">
+            <nav class="py-6 px-4 flex flex-col gap-1.5">
+                <a href="/" class="sidebar-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="ri-dashboard-line ri-lg"></i>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="/notes/" class="sidebar-item {% if '/notes/' in request.path %}active{% endif %}">
+                    <i class="ri-file-text-line ri-lg"></i>
+                    <span class="sidebar-text">Editor</span>
+                </a>
+                <a href="/tasks/" class="sidebar-item {% if '/tasks/' in request.path %}active{% endif %}">
+                    <i class="ri-task-line ri-lg"></i>
+                    <span class="sidebar-text">Tasks</span>
+                </a>
+                <a href="/ai-tools/" class="sidebar-item {% if '/ai-tools/' in request.path %}active{% endif %}">
+                    <i class="ri-sparkling-line ri-lg"></i>
+                    <span class="sidebar-text">AI Tools</span>
+                </a>
+                <a href="/whiteboard/" class="sidebar-item {% if '/whiteboard/' in request.path %}active{% endif %}">
+                    <i class="ri-brush-line ri-lg"></i>
+                    <span class="sidebar-text">Whiteboard</span>
+                </a>
+                <a href="/mindmap/" class="sidebar-item {% if '/mindmap/' in request.path %}active{% endif %}">
+                    <i class="ri-mind-map ri-lg"></i>
+                    <span class="sidebar-text">Mind Maps</span>
+                </a>
+                <a href="/graphs/" class="sidebar-item {% if '/graphs/' in request.path %}active{% endif %}">
+                    <i class="ri-line-chart-line ri-lg"></i>
+                    <span class="sidebar-text">Graphs</span>
+                </a>
+                <div class="h-px bg-[var(--border)] my-5 mx-2"></div>
+                <a href="/games/typing/"  class="sidebar-item">
+                    <i class="ri-keyboard-line ri-lg"></i>
+                    <span class="sidebar-text">Typing Game</span>
+                </a>
+                <a href="/games/chess/"   class="sidebar-item">
+                    <i class="ri-chess-line ri-lg"></i>
+                    <span class="sidebar-text">Chess</span>
+                </a>
+            </nav>
+        </aside>
+        {% endif %}
+
+        <!-- Main content -->
+        <main id="main-content" class="flex-1 overflow-y-auto {% if not user.is_authenticated %}flex items-center justify-center min-h-[calc(100vh-64px)]{% endif %} p-4 sm:p-6 md:p-8">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+<script>
+    // Sidebar toggle
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+
+    toggleBtn?.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-collapsed');
+        sidebar.classList.toggle('sidebar-expanded');
+    });
+</script>
+
+</body>
+</html>

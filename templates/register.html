@@ -1,0 +1,27 @@
+<!-- register.html -->
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - NotesForPro{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-16 px-6">
+    <div class="card p-10 text-center">
+        <h1 class="text-4xl font-bold text-[#00d4ff] mb-8 tracking-tight">
+            Join NotesForPro
+        </h1>
+        <p class="text-[#b0b0ff] mb-10 text-lg">
+            Create your account and start capturing ideas...
+        </p>
+
+        <!-- This is the important wrapper -->
+        <div id="form-result" class="min-h-[300px]">
+            {% include "register_form.html" %}
+        </div>
+
+        <p class="mt-8 text-[#b0b0ff]">
+            Already have an account? 
+            <a href="/login/" class="text-[#00d4ff] hover:underline font-medium">Log In</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

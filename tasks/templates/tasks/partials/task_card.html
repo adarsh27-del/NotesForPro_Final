@@ -1,0 +1,46 @@
+<div class="task-card group bg-gray-850/90 rounded-2xl p-5 border-l-4 shadow-md hover:shadow-xl hover:shadow-black/40 transition-all duration-200 cursor-move relative overflow-hidden"
+     style="border-left-color: {{ task.color }}"
+     data-id="{{ task.id }}"
+     data-title="{{ task.title|escapejs }}"
+     data-description="{{ task.description|escapejs }}"
+     data-priority="{{ task.priority }}"
+     data-status="{{ task.status }}"
+     data-deadline="{{ task.deadline|date:'Y-m-d' }}"
+     data-color="{{ task.color }}">
+
+  <!-- title -->
+  <h3 class="task-title font-semibold text-lg text-white group-hover:text-cyan-200 transition line-clamp-2 pr-10">
+    {{ task.title }}
+  </h3>
+
+  <!-- priority badge -->
+  <span class="absolute top-4 right-4 text-xs font-medium px-2.5 py-1 rounded-full
+               {% if task.priority == 'high' %}bg-red-500/30 text-red-300 border border-red-500/40
+               {% elif task.priority == 'medium' %}bg-amber-500/30 text-amber-300 border border-amber-500/40
+               {% else %}bg-emerald-500/30 text-emerald-300 border border-emerald-500/40{% endif %}">
+    {{ task.get_priority_display }}
+  </span>
+
+  <!-- description -->
+  {% if task.description %}
+    <p class="text-gray-400 text-sm mb-4 line-clamp-3">{{ task.description }}</p>
+  {% endif %}
+
+  <!-- footer -->
+  <div class="flex items-center justify-between text-xs text-gray-500 mt-3">
+    {% if task.deadline %}
+      <span class="{% if task.deadline < today %}text-red-400 font-semibold{% elif task.deadline == today %}text-amber-400 font-semibold{% endif %}">
+        Due {{ task.deadline|date:"d MMM" }}
+      </span>
+    {% endif %}
+
+    <div class="flex gap-3 opacity-100 transition">
+  <button onclick="editTask({{ task.id }})" class="hover:text-cyan-400 transition text-xl" title="Edit task">
+    ✏️
+  </button>
+  <button onclick="deleteTask({{ task.id }})" class="hover:text-red-400 transition text-xl" title="Delete task">
+    🗑️
+  </button>
+</div>
+  </div>
+</div>

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}NotesForPro – Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-12">
+  <h1 class="text-4xl sm:text-5xl font-extrabold text-center text-cyan-400 mb-12 sm:mb-16 tracking-tight drop-shadow-lg">
+    NotesForPro
+  </h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
+
+    <!-- Notes -->
+    <a href="{% url 'notes:list' %}" class="flex flex-col min-w-0 bg-gray-900/80 backdrop-blur-lg border border-cyan-800/40 rounded-3xl p-6 md:p-8 hover:border-cyan-400/60 transition transform hover:scale-[1.03] shadow-xl group">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-2xl sm:text-3xl transform group-hover:scale-110 transition-transform">📝</span>
+        <h2 class="text-xl sm:text-2xl md:text-2xl font-bold text-cyan-300">Editor</h2>
+      </div>
+      <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4">Rich text editor, Markdown, export DOCX/PDF</p>
+      <button hx-get="/api/notes/" hx-target="#notes-content" hx-swap="innerHTML" hx-indicator="#notes-loading"
+              class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-600 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold py-3 sm:py-4 px-4 sm:px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-cyan-500/50">
+        Load / Sync Notes
+      </button>
+      <div id="notes-content" class="mt-6 space-y-3 max-h-64 sm:max-h-80 overflow-y-auto"></div>
+      <div id="notes-loading" class="htmx-indicator text-center text-cyan-400 mt-3">Loading...</div>
+    </a>
+
+    <!-- Tasks -->
+    <a href="{% url 'tasks:board' %}" class="flex flex-col min-w-0 bg-gray-900/80 backdrop-blur-lg border border-cyan-800/40 rounded-3xl p-6 md:p-8 hover:border-cyan-400/60 transition transform hover:scale-[1.03] shadow-xl group">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-2xl sm:text-3xl transform group-hover:scale-110 transition-transform">✅</span>
+        <h2 class="text-xl sm:text-2xl md:text-2xl font-bold text-cyan-300">Tasks</h2>
+      </div>
+      <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4">To-do lists, deadlines, priorities, colors</p>
+      <button hx-get="/api/tasks/" hx-target="#tasks-content" hx-swap="innerHTML" hx-indicator="#tasks-loading"
+              class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-600 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold py-3 sm:py-4 px-4 sm:px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-cyan-500/50">
+        Load / Sync Tasks
+      </button>
+      <div id="tasks-content" class="mt-6 space-y-3 max-h-64 sm:max-h-80 overflow-y-auto"></div>
+      <div id="tasks-loading" class="htmx-indicator text-center text-cyan-400 mt-3">Loading...</div>
+    </a>
+
+    <!-- Whiteboard -->
+    <a href="{% url 'whiteboard:canvas' %}" class="flex flex-col min-w-0 bg-gray-900/80 backdrop-blur-lg border border-cyan-800/40 rounded-3xl p-6 md:p-8 hover:border-cyan-400/60 transition transform hover:scale-[1.03] shadow-xl group">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-2xl sm:text-3xl transform group-hover:scale-110 transition-transform">✏️</span>
+        <h2 class="text-xl sm:text-2xl md:text-2xl font-bold text-cyan-300">White board</h2>
+      </div>
+      <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4">Infinite canvas, drawing, export PNG/JSON</p>
+      <button class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-600 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold py-3 sm:py-4 px-4 sm:px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-cyan-500/50">
+        Open Whiteboard
+      </button>
+    </a>
+
+    <!-- AI Tools -->
+    <div class="flex flex-col min-w-0 bg-gray-900/80 backdrop-blur-lg border border-cyan-800/40 rounded-3xl p-6 md:p-8 hover:border-cyan-400/60 transition transform hover:scale-[1.03] shadow-xl group">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-2xl sm:text-3xl transform group-hover:scale-110 transition-transform">🤖</span>
+        <h2 class="text-xl sm:text-2xl md:text-2xl font-bold text-cyan-300">AI Tools</h2>
+      </div>
+      <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4">Summarize • Translate • Generate • OCR • STT • Meeting Notes</p>
+      <button class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-600 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold py-3 sm:py-4 px-4 sm:px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-cyan-500/50">
+        Use AI Tools
+      </button>
+    </div>
+
+    <!-- Graph Creator -->
+    <a href="{% url 'graph:creator' %}" class="flex flex-col min-w-0 bg-gray-900/80 backdrop-blur-lg border border-cyan-800/40 rounded-3xl p-6 md:p-8 hover:border-cyan-400/60 transition transform hover:scale-[1.03] shadow-xl group">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-2xl sm:text-3xl transform group-hover:scale-110 transition-transform">📊</span>
+        <h2 class="text-xl sm:text-2xl md:text-2xl font-bold text-cyan-300">Graph Creator</h2>
+      </div>
+      <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4">Line • Bar • Pie • Scatter • Box • 3D plots</p>
+      <button class="w-full sm:w-auto bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-600 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold py-3 sm:py-4 px-4 sm:px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-cyan-500/50">
+        Create Graph
+      </button>
+    </a>
+
+    <!-- Mind Map -->
+    <a href="{% url 'mindmap:generator' %}" class="flex flex-col min-w-0 bg-gradient-to-br from-cyan-950/40 to-blue-950/30 border border-cyan-800/50 hover:border-cyan-500/70 rounded-2xl p-4 md:p-6 transition-all hover:scale-[1.02] hover:shadow-xl group">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="text-2xl sm:text-3xl">🧠</div>
+        <h2 class="text-lg sm:text-2xl md:text-2xl font-bold text-cyan-300 group-hover:text-cyan-200">Mind Maps</h2>
+      </div>
+      <p class="text-sm sm:text-base text-gray-300 mb-3">Generate beautiful AI-powered mind maps from any topic</p>
+      <span class="inline-block bg-cyan-600/30 text-cyan-200 px-3 py-1 rounded-lg text-xs sm:text-sm font-medium group-hover:bg-cyan-500/40">
+        Try Now →
+      </span>
+    </a>
+
+    <!-- Games -->
+    <div class="flex flex-col min-w-0 bg-gray-900/80 backdrop-blur-lg border border-cyan-800/40 rounded-3xl p-6 md:p-8 hover:border-cyan-400/60 transition-all duration-300 shadow-xl hover:shadow-cyan-900/40 group col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-1">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-2xl sm:text-3xl transform group-hover:scale-110 transition-transform">🎮</span>
+        <h2 class="text-xl sm:text-2xl md:text-2xl font-bold text-cyan-300">Games</h2>
+      </div>
+      <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-4">Typing speed training & Chess matches</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+        <a href="{% url 'games:typing' %}" class="flex justify-center">
+          <button class="w-full bg-gray-800 hover:bg-cyan-900/40 text-white py-4 sm:py-6 rounded-2xl transition font-medium shadow-md">Typing Mastery</button>
+        </a>
+        <a href="{% url 'games:chess' %}" class="flex justify-center">
+          <button class="w-full bg-gray-800 hover:bg-cyan-900/40 text-white py-4 sm:py-6 rounded-2xl transition font-medium shadow-md">Chess</button>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

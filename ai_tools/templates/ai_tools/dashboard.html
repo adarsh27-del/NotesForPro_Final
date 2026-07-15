@@ -1,0 +1,532 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Tools – NotesForPro{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-100 p-6">
+
+<div class="max-w-6xl mx-auto">
+
+<h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-8">
+AI Tools Dashboard
+</h1>
+
+<!-- TABS -->
+
+<div class="flex flex-wrap gap-3 mb-8">
+
+<button class="tab-btn active" data-tab="summarize">Summarize</button> <button class="tab-btn" data-tab="translate">Translate</button> <button class="tab-btn" data-tab="generate">Content Generator</button> <button class="tab-btn" data-tab="ocr">OCR</button> <button class="tab-btn" data-tab="image">Image Generator</button> <button class="tab-btn" data-tab="meeting">Meeting Notes</button>
+
+</div>
+
+<!-- SUMMARIZE -->
+
+<div id="summarize" class="tab-panel">
+
+<div class="tool-box">
+
+<h2 class="tool-title">Text Summarization</h2>
+
+<textarea id="sum-input" class="tool-textarea" placeholder="Paste text to summarize..."></textarea>
+
+<div class="flex gap-3 flex-wrap">
+
+<button onclick="summarizeText()" class="tool-btn">Summarize</button> <button onclick="copyText('sum-result')" class="tool-btn secondary">Copy</button> <button onclick="downloadText('sum-result','summary.txt')" class="tool-btn secondary">Download</button>
+
+</div>
+
+<div id="sum-result" class="tool-result"></div>
+
+</div>
+</div>
+
+<!-- TRANSLATE -->
+
+<div id="translate" class="tab-panel hidden">
+
+<div class="tool-box">
+
+<h2 class="tool-title">Translation</h2>
+
+<textarea id="trans-input" class="tool-textarea" placeholder="Enter text..."></textarea>
+
+<select id="trans-lang" class="tool-input">
+
+<option>English</option>
+<option>Hindi</option>
+<option>Spanish</option>
+<option>French</option>
+<option>German</option>
+
+</select>
+
+<div class="flex gap-3 flex-wrap">
+
+<button onclick="translateText()" class="tool-btn">Translate</button> <button onclick="copyText('trans-result')" class="tool-btn secondary">Copy</button>
+
+</div>
+
+<div id="trans-result" class="tool-result"></div>
+
+</div>
+</div>
+
+<!-- CONTENT GENERATOR -->
+
+<div id="generate" class="tab-panel hidden">
+
+<div class="tool-box">
+
+<h2 class="tool-title">Content Generator</h2>
+
+<textarea id="gen-input" class="tool-textarea" placeholder="Enter prompt..."></textarea>
+
+<div class="flex gap-3 flex-wrap">
+
+<button onclick="generateContent()" class="tool-btn">Generate</button>
+<button onclick="speak('gen-result')" class="tool-btn secondary">🔊 Speak</button>
+<button onclick="stopVoice()" class="tool-btn secondary">⏹ Stop</button>
+<button onclick="toggleVoice()" id="voiceToggle" class="tool-btn secondary">🔊 Voice ON</button>
+<button onclick="copyText('gen-result')" class="tool-btn secondary">Copy</button>
+
+<div class="mt-4 flex gap-4 flex-wrap">
+
+<select id="voiceSelect" class="tool-input w-auto"></select>
+
+<div>
+<label class="text-sm">Speed ⚡</label>
+<input type="range" id="speedControl" min="0.5" max="2" step="0.1" value="1">
+</div>
+
+</div>
+</div>
+
+<div id="gen-result" class="tool-result"></div>
+
+</div>
+</div>
+
+<!-- OCR -->
+
+<div id="ocr" class="tab-panel hidden">
+
+<div class="tool-box">
+
+<h2 class="tool-title">OCR (Image to Text)</h2>
+
+<input type="file" id="ocr-file" class="tool-input">
+
+<button onclick="runOCR()" class="tool-btn">Extract Text</button>
+
+<div id="ocr-result" class="tool-result"></div>
+
+</div>
+</div>
+
+<!-- IMAGE GENERATOR -->
+
+<div id="image" class="tab-panel hidden">
+
+<div class="tool-box">
+
+<h2 class="tool-title">AI Image Generator</h2>
+
+<textarea id="img-prompt" class="tool-textarea" placeholder="Describe image..."></textarea>
+
+<button onclick="generateImage()" class="tool-btn">Generate Image</button>
+
+<div class="mt-6 text-center">
+
+<div id="img-loader" class="hidden text-cyan-400">Generating image...</div>
+
+<img id="img-result" class="rounded-xl max-w-full hidden"/>
+
+</div>
+
+</div>
+</div>
+
+<!-- MEETING NOTES -->
+
+<div id="meeting" class="tab-panel hidden">
+
+<div class="tool-box">
+
+<h2 class="tool-title">Meeting Notes Generator</h2>
+
+<textarea id="meeting-input" class="tool-textarea" placeholder="Paste meeting transcript..."></textarea>
+
+<div class="flex gap-3 flex-wrap">
+
+<button onclick="startSTT()" class="tool-btn secondary">🎤 Speech Input</button> <button onclick="generateMeeting()" class="tool-btn">Generate Notes</button> <button onclick="copyText('meeting-result')" class="tool-btn secondary">Copy</button>
+
+</div>
+
+<div id="meeting-result" class="tool-result"></div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<style>
+
+.tab-btn{
+padding:10px 20px;
+border-radius:10px;
+background:#0f172a;
+border:1px solid #334155;
+cursor:pointer;
+}
+
+.tab-btn.active{
+background:#06b6d4;
+color:black;
+}
+
+.tab-btn:hover{
+background:#1e293b;
+}
+
+.tool-box{
+background:#0f172a;
+padding:24px;
+border-radius:16px;
+border:1px solid #334155;
+}
+
+.tool-title{
+font-size:20px;
+margin-bottom:16px;
+color:#22d3ee;
+}
+
+.tool-textarea{
+width:100%;
+background:#020617;
+border:1px solid #334155;
+padding:14px;
+border-radius:10px;
+margin-bottom:16px;
+}
+
+.tool-input{
+width:100%;
+background:#020617;
+border:1px solid #334155;
+padding:10px;
+border-radius:10px;
+margin-bottom:16px;
+}
+
+.tool-btn{
+background:#06b6d4;
+padding:10px 20px;
+border-radius:10px;
+color:black;
+font-weight:600;
+cursor:pointer;
+}
+
+.secondary{
+background:#1e293b;
+color:white;
+}
+
+.tool-result{
+margin-top:20px;
+background:#020617;
+padding:16px;
+border-radius:10px;
+min-height:100px;
+white-space:pre-wrap;
+}
+
+</style>
+
+<script>
+
+document.addEventListener("DOMContentLoaded",function(){
+
+const tabButtons=document.querySelectorAll(".tab-btn")
+const tabPanels=document.querySelectorAll(".tab-panel")
+
+tabButtons.forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+tabButtons.forEach(b=>b.classList.remove("active"))
+
+btn.classList.add("active")
+
+const target=btn.dataset.tab
+
+tabPanels.forEach(panel=>panel.classList.add("hidden"))
+
+document.getElementById(target).classList.remove("hidden")
+
+})
+
+})
+
+})
+
+async function apiRequest(url,payload){
+
+try{
+
+let res=await fetch(url,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(payload)
+})
+
+return await res.json()
+
+}catch{
+
+alert("Server error")
+return null
+
+}
+
+}
+
+async function summarizeText(){
+
+let text=document.getElementById("sum-input").value
+
+document.getElementById("sum-result").innerText="Processing..."
+
+let data=await apiRequest("/ai-tools/summarize/",{text:text})
+
+if(data) document.getElementById("sum-result").innerText=data.result
+
+}
+
+async function translateText(){
+
+let text=document.getElementById("trans-input").value
+let lang=document.getElementById("trans-lang").value
+
+document.getElementById("trans-result").innerText="Translating..."
+
+let data=await apiRequest("/ai-tools/translate/",{text:text,target:lang})
+
+if(data) document.getElementById("trans-result").innerText=data.result
+
+}
+
+async function generateContent(){
+
+let prompt=document.getElementById("gen-input").value
+
+document.getElementById("gen-result").innerText="Generating..."
+
+let data=await apiRequest("/ai-tools/generate/",{prompt:prompt})
+
+if(data) document.getElementById("gen-result").innerText=data.result
+
+}
+
+async function runOCR(){
+
+let file=document.getElementById("ocr-file").files[0]
+
+let formData=new FormData()
+formData.append("file",file)
+
+let res=await fetch("/ai-tools/ocr/",{method:"POST",body:formData})
+
+let data=await res.json()
+
+document.getElementById("ocr-result").innerText=data.result
+
+}
+
+async function generateImage(){
+
+let prompt=document.getElementById("img-prompt").value
+
+document.getElementById("img-loader").classList.remove("hidden")
+
+let data=await apiRequest("/ai-tools/generate-image/",{prompt:prompt})
+
+let img=document.getElementById("img-result")
+
+img.classList.remove("hidden")
+img.src=data.image_url
+
+document.getElementById("img-loader").classList.add("hidden")
+
+}
+
+async function generateMeeting(){
+
+let text=document.getElementById("meeting-input").value
+
+document.getElementById("meeting-result").innerText="Generating..."
+
+let data=await apiRequest("/ai-tools/meeting-notes/",{text:text})
+
+if(data) document.getElementById("meeting-result").innerText=data.result
+
+}
+
+function startSTT(){
+
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition
+
+if(!SpeechRecognition){
+
+alert("Speech recognition not supported")
+
+return
+
+}
+
+let recognition=new SpeechRecognition()
+
+recognition.lang="en-US"
+
+recognition.start()
+
+recognition.onresult=function(event){
+
+document.getElementById("meeting-input").value=event.results[0][0].transcript
+
+}
+
+}
+
+let voiceEnabled = true
+let voices = []
+let selectedVoiceIndex = 0
+
+function loadVoices(){
+
+voices = speechSynthesis.getVoices()
+
+let voiceSelect = document.getElementById("voiceSelect")
+
+voiceSelect.innerHTML = ""
+
+voices.forEach((voice,index)=>{
+
+let option = document.createElement("option")
+
+option.value = index
+option.textContent = voice.name + " (" + voice.lang + ")"
+
+voiceSelect.appendChild(option)
+
+})
+
+}
+
+speechSynthesis.onvoiceschanged = loadVoices
+/* ==============================
+   VOICE SELECTOR
+============================== */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+let voiceSelect = document.getElementById("voiceSelect")
+
+if(voiceSelect){
+
+voiceSelect.addEventListener("change",function(){
+
+selectedVoiceIndex = this.value
+
+})
+
+}
+
+})
+
+
+
+function speak(id){
+
+if(!voiceEnabled) return
+
+let text = document.getElementById(id).innerText
+
+if(!text) return
+
+speechSynthesis.cancel()
+
+let speech = new SpeechSynthesisUtterance(text)
+
+speech.voice = voices[selectedVoiceIndex]
+
+speech.rate = document.getElementById("speedControl").value
+
+speech.pitch = 1
+
+speech.volume = 1
+
+speechSynthesis.speak(speech)
+
+}
+
+function toggleVoice(){
+
+voiceEnabled = !voiceEnabled
+
+let btn = document.getElementById("voiceToggle")
+
+if(voiceEnabled){
+
+btn.innerText = "🔊 Voice ON"
+
+}else{
+
+btn.innerText = "🔇 Voice OFF"
+
+speechSynthesis.cancel()
+
+}
+
+}
+
+function stopVoice(){
+
+speechSynthesis.cancel()
+
+}
+
+function copyText(id){
+
+let text=document.getElementById(id).innerText
+
+navigator.clipboard.writeText(text)
+
+alert("Copied")
+
+}
+
+function downloadText(id,filename){
+
+let text=document.getElementById(id).innerText
+
+let blob=new Blob([text],{type:"text/plain"})
+
+let a=document.createElement("a")
+
+a.href=URL.createObjectURL(blob)
+
+a.download=filename
+
+a.click()
+
+}
+
+</script>
+
+{% endblock %}

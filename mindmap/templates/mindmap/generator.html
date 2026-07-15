@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Mind Map – NotesForPro{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-gradient-to-br from-gray-950 to-black p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <h1 class="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-10">
+      AI Mind Map Generator
+    </h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <!-- Left – Input -->
+      <div class="bg-gray-900/70 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl">
+        <label class="block text-cyan-300 font-medium mb-3">Your Topic / Question</label>
+        <textarea id="prompt" rows="5"
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 resize-none"
+          placeholder="Example: How does blockchain really work?"></textarea>
+
+        <button id="generateBtn"
+          class="mt-6 w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-lg rounded-xl transition-all shadow-lg hover:shadow-cyan-500/30">
+          Generate Mind Map
+        </button>
+      </div>
+
+      <!-- Right – Result -->
+      <div class="bg-gray-900/70 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 shadow-2xl overflow-auto max-h-[70vh]">
+        <div id="result" class="min-h-[400px] flex items-center justify-center text-gray-400">
+          <div class="text-center">
+            <div class="text-6xl mb-4">🧠</div>
+            <p>Generate your first mind map</p>
+          </div>
+        </div>
+        <div id="svgContainer" class="hidden"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+
+document.getElementById('generateBtn').addEventListener('click', async function () {
+
+    const btn = this;
+    const prompt = document.getElementById('prompt').value.trim();
+
+    if (!prompt) {
+        alert("Please enter a topic");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Generating...";
+
+    try {
+
+        const response = await fetch("{% url 'mindmap:generate' %}", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+
+            body: JSON.stringify({
+                prompt: prompt
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            document.getElementById("result").innerHTML = `
+            <img src="data:image/svg+xml;base64,${data.svg}" 
+                 style="max-width:100%; height:auto;">
+            `;
+
+        } else {
+
+            document.getElementById("result").innerHTML =
+                `<p class="text-red-400">${data.error}</p>`;
+
+        }
+
+    } catch (error) {
+
+        document.getElementById("result").innerHTML =
+            `<p class="text-red-400">Server error</p>`;
+
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Generate Mind Map";
+
+});
+
+</script>
+{% endblock %}

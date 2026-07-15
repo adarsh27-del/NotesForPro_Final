@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In – NotesForPro{% endblock %}
+
+{% block content %}
+
+<div class="w-full max-w-md px-8 py-12 bg-[#161b22]/70 backdrop-blur-xl border border-[var(--border)] rounded-2xl shadow-2xl">
+    <h1 class="text-4xl font-bold text-center bg-gradient-to-r from-[var(--accent)] to-cyan-300 bg-clip-text text-transparent mb-2">
+        Welcome back
+    </h1>
+    <p class="text-center text-[var(--text-dim)] mb-10">Sign in to access your workspace</p>
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <input type="text" name="username" placeholder="Username" required autofocus
+               class="w-full bg-[#0d1117] border border-[var(--border)] rounded-xl px-5 py-4 text-white placeholder-[#6e7681] focus:outline-none focus:border-[var(--accent)] transition">
+
+        <input type="password" name="password" placeholder="Password" required
+               class="w-full bg-[#0d1117] border border-[var(--border)] rounded-xl px-5 py-4 text-white placeholder-[#6e7681] focus:outline-none focus:border-[var(--accent)] transition">
+
+        <button type="submit"
+                class="w-full py-4 bg-gradient-to-r from-[var(--accent)] to-cyan-500 hover:from-cyan-400 hover:to-cyan-400 rounded-xl font-semibold text-lg shadow-lg shadow-cyan-500/20 transition-all duration-300">
+            Sign In
+        </button>
+    </form>
+
+    <div class="mt-8 space-y-4">
+        <a href="/register/"
+           class="block w-full py-4 text-center bg-[#21262d] hover:bg-[#30363d] border border-[var(--border)] rounded-xl font-medium transition">
+            Create new account
+        </a>
+    </div>
+
+    {% if error or form.errors %}
+    <p class="text-center text-red-400 mt-6 text-sm">Invalid credentials. Please try again.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
