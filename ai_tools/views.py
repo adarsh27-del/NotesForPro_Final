@@ -68,11 +68,12 @@ def generate_content(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            prompt = data.get("prompt", "")
+
+            prompt = data.get("prompt")
 
             response = model.generate_content(
                 prompt,
-                request_options={"timeout": 30}
+                request_options={"timeout": 120}
             )
 
             return JsonResponse({
@@ -83,8 +84,6 @@ def generate_content(request):
             return JsonResponse({
                 "error": str(e)
             }, status=500)
-
-
 # ---------------- MEETING NOTES ----------------
 
 @csrf_exempt
