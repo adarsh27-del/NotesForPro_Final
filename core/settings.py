@@ -94,6 +94,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Add these lines (or update if already exist)
+ALLOWED_HOSTS = [
+    "notesforprofinal-production.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.up.railway.app",
