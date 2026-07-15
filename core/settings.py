@@ -95,15 +95,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Add these lines (or update if already exist)
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '.ngrok-free.app',          # wildcard for all ngrok subdomains
-    '.ngrok.io',
+    "localhost",
+    "127.0.0.1",
+    ".ngrok-free.app",
+    ".ngrok.io",
+    ".up.railway.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'https://*.ngrok-free.app',   # ← this is the most important line
-    'https://*.ngrok.io',
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://*.ngrok-free.app",
+    "https://*.ngrok.io",
+    "https://*.up.railway.app",
 ]
