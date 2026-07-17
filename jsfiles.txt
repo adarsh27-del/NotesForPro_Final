@@ -1,0 +1,166 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 526B-7632
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\admin\static\admin\js
+
+27-06-2026  21:55             8,076 actions.js
+27-06-2026  21:55             1,060 autocomplete.js
+27-06-2026  21:55             9,141 calendar.js
+27-06-2026  21:55               884 cancel.js
+27-06-2026  21:55               606 change_form.js
+27-06-2026  21:55             6,208 core.js
+27-06-2026  21:55               978 filters.js
+27-06-2026  21:55            15,628 inlines.js
+27-06-2026  21:55               347 jquery.init.js
+27-06-2026  21:55             3,063 nav_sidebar.js
+27-06-2026  21:55               532 popup_response.js
+27-06-2026  21:55             1,531 prepopulate.js
+27-06-2026  21:55               586 prepopulate_init.js
+27-06-2026  21:55             4,530 SelectBox.js
+27-06-2026  21:55            15,845 SelectFilter2.js
+27-06-2026  21:55             1,653 theme.js
+27-06-2026  21:55             1,480 unusable_password_field.js
+27-06-2026  21:55             7,887 urlify.js
+              18 File(s)         80,035 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\admin\static\admin\js\admin
+
+27-06-2026  21:55            19,319 DateTimeShortcuts.js
+27-06-2026  21:55             9,777 RelatedObjectLookups.js
+               2 File(s)         29,096 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\admin\static\admin\js\vendor\jquery
+
+27-06-2026  21:55           285,314 jquery.js
+27-06-2026  21:55            87,533 jquery.min.js
+               2 File(s)        372,847 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\admin\static\admin\js\vendor\select2
+
+27-06-2026  21:55           173,566 select2.full.js
+27-06-2026  21:55            79,212 select2.full.min.js
+               2 File(s)        252,778 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\admin\static\admin\js\vendor\select2\i18n
+
+27-06-2026  21:55               866 af.js
+27-06-2026  21:55               905 ar.js
+27-06-2026  21:55               721 az.js
+27-06-2026  21:55               968 bg.js
+27-06-2026  21:55             1,291 bn.js
+27-06-2026  21:55               965 bs.js
+27-06-2026  21:55               900 ca.js
+27-06-2026  21:55             1,292 cs.js
+27-06-2026  21:55               828 da.js
+27-06-2026  21:55               866 de.js
+27-06-2026  21:55             1,017 dsb.js
+27-06-2026  21:55             1,182 el.js
+27-06-2026  21:55               844 en.js
+27-06-2026  21:55               922 es.js
+27-06-2026  21:55               801 et.js
+27-06-2026  21:55               868 eu.js
+27-06-2026  21:55             1,023 fa.js
+27-06-2026  21:55               803 fi.js
+27-06-2026  21:55               924 fr.js
+27-06-2026  21:55               924 gl.js
+27-06-2026  21:55               984 he.js
+27-06-2026  21:55             1,175 hi.js
+27-06-2026  21:55               852 hr.js
+27-06-2026  21:55             1,018 hsb.js
+27-06-2026  21:55               831 hu.js
+27-06-2026  21:55             1,028 hy.js
+27-06-2026  21:55               768 id.js
+27-06-2026  21:55               807 is.js
+27-06-2026  21:55               897 it.js
+27-06-2026  21:55               862 ja.js
+27-06-2026  21:55             1,195 ka.js
+27-06-2026  21:55             1,088 km.js
+27-06-2026  21:55               855 ko.js
+27-06-2026  21:55               944 lt.js
+27-06-2026  21:55               900 lv.js
+27-06-2026  21:55             1,038 mk.js
+27-06-2026  21:55               811 ms.js
+27-06-2026  21:55               778 nb.js
+27-06-2026  21:55             1,357 ne.js
+27-06-2026  21:55               904 nl.js
+27-06-2026  21:55               947 pl.js
+27-06-2026  21:55             1,049 ps.js
+27-06-2026  21:55               876 pt-BR.js
+27-06-2026  21:55               878 pt.js
+27-06-2026  21:55               938 ro.js
+27-06-2026  21:55             1,171 ru.js
+27-06-2026  21:55             1,306 sk.js
+27-06-2026  21:55               925 sl.js
+27-06-2026  21:55               903 sq.js
+27-06-2026  21:55             1,109 sr-Cyrl.js
+27-06-2026  21:55               980 sr.js
+27-06-2026  21:55               786 sv.js
+27-06-2026  21:55             1,074 th.js
+27-06-2026  21:55               771 tk.js
+27-06-2026  21:55               775 tr.js
+27-06-2026  21:55             1,156 uk.js
+27-06-2026  21:55               796 vi.js
+27-06-2026  21:55               768 zh-CN.js
+27-06-2026  21:55               707 zh-TW.js
+              59 File(s)         55,917 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\admin\static\admin\js\vendor\xregexp
+
+27-06-2026  21:55           325,171 xregexp.js
+27-06-2026  21:55           163,184 xregexp.min.js
+               2 File(s)        488,355 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\contrib\gis\static\gis\js
+
+27-06-2026  21:55             9,019 OLMapWidget.js
+               1 File(s)          9,019 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\django\views\templates
+
+27-06-2026  21:55             2,785 i18n_catalog.js
+               1 File(s)          2,785 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\pip\_vendor\urllib3\contrib\emscripten
+
+27-06-2026  21:50             3,677 emscripten_fetch_worker.js
+               1 File(s)          3,677 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\plotly\labextension\static
+
+15-07-2026  10:46         4,835,652 1.3ad216e94ff8bdcd7b73.js
+15-07-2026  10:46             3,789 remoteEntry.58c394332ed33325ffe5.js
+15-07-2026  10:46               118 style.js
+               3 File(s)      4,839,559 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\plotly\package_data
+
+15-07-2026  10:46         4,851,164 plotly.min.js
+15-07-2026  10:46         5,007,998 widgetbundle.js
+               2 File(s)      9,859,162 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\rest_framework\static\rest_framework\js
+
+27-06-2026  21:57             3,796 ajax-form.js
+27-06-2026  21:57            39,680 bootstrap.min.js
+27-06-2026  21:57             1,793 csrf.js
+27-06-2026  21:57             1,268 default.js
+27-06-2026  21:57            87,533 jquery-3.7.1.min.js
+27-06-2026  21:57                59 load-ajax-form.js
+27-06-2026  21:57            13,632 prettify-min.js
+               7 File(s)        147,761 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\Lib\site-packages\urllib3\contrib\emscripten
+
+27-06-2026  21:53             3,677 emscripten_fetch_worker.js
+               1 File(s)          3,677 bytes
+
+ Directory of C:\Users\ADMIN\Downloads\copy_code_update_26-04-2026\copy_code_update_26-04-2026\NotesForPro_Final - Copy\venv310\share\jupyter\labextensions\jupyterlab-plotly\static
+
+15-07-2026  10:46         4,835,652 1.3ad216e94ff8bdcd7b73.js
+15-07-2026  10:46             3,789 remoteEntry.58c394332ed33325ffe5.js
+15-07-2026  10:46               118 style.js
+               3 File(s)      4,839,559 bytes
+
+     Total Files Listed:
+             104 File(s)     20,984,227 bytes
+               0 Dir(s)  117,386,559,488 bytes free

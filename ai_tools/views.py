@@ -6,7 +6,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
+import requests
 import google.generativeai as genai
 
 
@@ -16,6 +16,39 @@ genai.configure(api_key=settings.GEMINI_API_KEY)
 model = genai.GenerativeModel("models/gemini-2.5-flash-lite")
 
 
+OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
+
+def ask_openrouter(prompt):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "model": "deepseek/deepseek-chat-v3-0324",
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    }
+
+    response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        json=data,
+        timeout=120
+    )
+
+    print(response.status_code)
+    print(response)
+    print(response.url)
+
+    return response.text
+ 
+
+    return response.json()["choices"][0]["message"]["content"]
 # DASHBOARD
 def dashboard(request):
     return render(request, "ai_tools/dashboard.html")
@@ -33,7 +66,7 @@ def summarize(request):
 
         prompt = f"Summarize the following text:\n{text}"
 
-        response = model.generate_content(prompt)
+        response = ask_openrouter(prompt)
 
         return JsonResponse({
             "result": response.text
