@@ -13,7 +13,7 @@ import google.generativeai as genai
 # Configure Gemini
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("models/gemini-2.5-flash-lite")
 
 
 # DASHBOARD
@@ -44,21 +44,44 @@ def summarize(request):
 
 @csrf_exempt
 def translate(request):
+    try:
+        print("===== TRANSLATE REQUEST =====")
 
-    if request.method == "POST":
+        print("Method:", request.method)
+
+        print("Body:", request.body)
 
         data = json.loads(request.body)
 
+        print(data)
+
         text = data.get("text")
+
         target = data.get("target")
+
+        print(text, target)
 
         prompt = f"Translate the following text to {target}:\n{text}"
 
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            request_options={"timeout": 120}
+        )
+
+        print(response)
 
         return JsonResponse({
             "result": response.text
         })
+
+    except Exception as e:
+
+        traceback.print_exc()
+
+        return JsonResponse({
+            "error": str(e),
+            "type": type(e).__name__
+        }, status=500)
 
 
 # ---------------- CONTENT GENERATION ----------------
@@ -167,4 +190,4 @@ def generate_image(request):
             return JsonResponse({
                 "success": False,
                 "error": str(e)
-            })
+            }) 
