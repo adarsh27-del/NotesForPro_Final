@@ -317,7 +317,10 @@ document.getElementById("trans-result").innerText="Translating..."
 
 let data=await apiRequest("/ai-tools/translate/",{text:text,target:lang})
 
-if(data) document.getElementById("trans-result").innerText=data.result
+if(data){
+    document.getElementById("trans-result").innerText =
+        data.result || data.error || JSON.stringify(data);
+}
 
 }
 

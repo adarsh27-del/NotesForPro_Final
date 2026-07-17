@@ -45,7 +45,7 @@ def ask_openrouter(prompt):
     print(response)
     print(response.url)
 
-    return response.text
+    return response
  
 
     return response.json()["choices"][0]["message"]["content"]
@@ -69,7 +69,7 @@ def summarize(request):
         response = ask_openrouter(prompt)
 
         return JsonResponse({
-            "result": response.text
+            "result": response
         })
 
 
@@ -96,7 +96,7 @@ def translate(request):
 
         prompt = f"Translate the following text to {target}:\n{text}"
 
-        response = model.generate_content(
+        result = ask_openrouter(
             prompt,
             request_options={"timeout": 120}
         )
@@ -104,7 +104,7 @@ def translate(request):
         print(response)
 
         return JsonResponse({
-            "result": response.text
+            "result": response
         })
 
     except Exception as e:
@@ -127,16 +127,15 @@ def generate_content(request):
 
             prompt = data.get("prompt")
 
-            response = model.generate_content(
-                prompt,
-                request_options={"timeout": 120}
-            )
+            result = ask_openrouter(prompt)
 
             return JsonResponse({
-                "result": response.text
+                "result": result
             })
 
         except Exception as e:
+            traceback.print_exc()
+
             return JsonResponse({
                 "error": str(e)
             }, status=500)
@@ -158,10 +157,10 @@ def meeting_notes(request):
         {transcript}
         """
 
-        response = model.generate_content(prompt)
+        result = ask_openrouter(prompt)
 
         return JsonResponse({
-            "result": response.text
+            "result": response
         })
 
 
@@ -181,7 +180,7 @@ def ocr(request):
 
         prompt = "Extract all text from this image."
 
-        response = model.generate_content([
+        result = ask_openrouter([
             prompt,
             {
                 "mime_type": file.content_type,
@@ -190,7 +189,7 @@ def ocr(request):
         ])
 
         return JsonResponse({
-            "result": response.text
+            "result": response
         })
 
 
