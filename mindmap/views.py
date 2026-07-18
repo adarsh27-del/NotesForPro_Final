@@ -9,17 +9,41 @@ import base64
 import os
 import uuid
 
-import google.generativeai as genai
+import requests
 import graphviz
 
 from .models import MindMap
 
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
 
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
 
+def ask_openrouter(prompt):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "model": "deepseek/deepseek-chat-v3-0324",
+        "messages": [
+            {
+                "role": "user",
+                "content": str(prompt)
+            }
+        ]
+    }
+
+    response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        json=data,
+        timeout=120
+    )
+
+    response.raise_for_status()
+
+    return response.json()["choices"][0]["message"]["content"]
 
 @login_required
 def generator(request):
@@ -41,39 +65,39 @@ def generate(request):
             })
 
         # ------------------------
-        # GEMINI REQUEST
+        # OPENROUTER REQUEST
         # ------------------------
 
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        ai_prompt = f"""
+You are an AI that generates ONLY valid JSON.
 
-        gemini_prompt = f"""
-        You are a JSON generator.
+Return ONLY valid JSON.
+Do not use markdown.
+Do not use ```json.
 
-        Return ONLY valid JSON.
+Topic:
+{prompt}
 
-        Topic: {prompt}
+Format:
 
-        Format:
-
+{{
+    "central_concept":"topic",
+    "branches":[
         {{
-        "central_concept": "topic",
-        "branches":[
-            {{
             "title":"branch",
             "points":["p1","p2","p3"]
-            }}
-        ]
         }}
+    ]
+}}
+"""
 
-        DO NOT include explanation or markdown.
-        """
+        text = ask_openrouter(ai_prompt)
 
-        response = model.generate_content(gemini_prompt)
-
-        text = response.text.strip()
+        text = text.replace("```json", "")
+        text = text.replace("```", "")
+        text = text.strip()
 
         structure = json.loads(text)
-
         central = structure["central_concept"]
 
         # ------------------------

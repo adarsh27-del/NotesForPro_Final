@@ -7,14 +7,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import requests
-import google.generativeai as genai
-
-
-# Configure Gemini
-genai.configure(api_key=settings.GEMINI_API_KEY)
-
-model = genai.GenerativeModel("models/gemini-2.5-flash-lite")
-
 
 OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
 
@@ -29,7 +21,7 @@ def ask_openrouter(prompt):
         "messages": [
             {
                 "role": "user",
-                "content": prompt
+                "content": str(prompt)
             }
         ]
     }
@@ -42,14 +34,14 @@ def ask_openrouter(prompt):
     )
 
     print(response.status_code)
-    print(response)
-    print(response.url)
+    print(response.text)
 
-    return response
- 
+    response.raise_for_status()
 
     return response.json()["choices"][0]["message"]["content"]
-# DASHBOARD
+
+# ---------------- DASHBOARD ----------------
+
 def dashboard(request):
     return render(request, "ai_tools/dashboard.html")
 
@@ -58,18 +50,16 @@ def dashboard(request):
 
 @csrf_exempt
 def summarize(request):
-
     if request.method == "POST":
-
         data = json.loads(request.body)
         text = data.get("text")
 
         prompt = f"Summarize the following text:\n{text}"
 
-        response = ask_openrouter(prompt)
+        result = ask_openrouter(prompt)
 
         return JsonResponse({
-            "result": response
+            "result": result
         })
 
 
@@ -77,47 +67,22 @@ def summarize(request):
 
 @csrf_exempt
 def translate(request):
-    try:
-        print("===== TRANSLATE REQUEST =====")
-
-        print("Method:", request.method)
-
-        print("Body:", request.body)
-
+    if request.method == "POST":
         data = json.loads(request.body)
 
-        print(data)
-
         text = data.get("text")
-
         target = data.get("target")
-
-        print(text, target)
 
         prompt = f"Translate the following text to {target}:\n{text}"
 
-        result = ask_openrouter(
-            prompt,
-            request_options={"timeout": 120}
-        )
-
-        print(response)
+        result = ask_openrouter(prompt)
 
         return JsonResponse({
-            "result": response
+            "result": result
         })
 
-    except Exception as e:
 
-        traceback.print_exc()
-
-        return JsonResponse({
-            "error": str(e),
-            "type": type(e).__name__
-        }, status=500)
-
-
-# ---------------- CONTENT GENERATION ----------------
+#--------------- CONTENT GENERATION ----------------
 
 @csrf_exempt
 def generate_content(request):
@@ -160,7 +125,7 @@ def meeting_notes(request):
         result = ask_openrouter(prompt)
 
         return JsonResponse({
-            "result": response
+            "result": result
         })
 
 
@@ -189,7 +154,7 @@ def ocr(request):
         ])
 
         return JsonResponse({
-            "result": response
+            "result": result
         })
 
 
