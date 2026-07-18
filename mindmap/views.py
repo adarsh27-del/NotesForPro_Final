@@ -11,7 +11,8 @@ import uuid
 
 import requests
 import graphviz
-
+import shutil
+import subprocess
 from .models import MindMap
 
 
@@ -143,12 +144,29 @@ Format:
 
                 point_id = f"{branch_id}_{j}"
 
-                dot.node(point_id,
-                        point,
-                        shape="box",
-                        fontcolor="white")
+                dot.node(
+                    point_id,
+                    point,
+                    shape="box",
+                    fontcolor="white"
+                )
 
                 dot.edge(branch_id, point_id)
+
+        # ------------------------
+        # GRAPHVIZ DEBUG
+        # ------------------------
+        print("=" * 60)
+        print("OS:", os.name)
+        print("PATH:", os.environ.get("PATH"))
+        print("DOT:", shutil.which("dot"))
+
+        try:
+            print(subprocess.check_output(["dot", "-V"]).decode())
+        except Exception as e:
+            print("DOT ERROR:", e)
+
+        print("=" * 60)
 
         filename = f"mindmap_{uuid.uuid4().hex}"
 
