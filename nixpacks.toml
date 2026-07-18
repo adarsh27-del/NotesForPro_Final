@@ -1,2 +1,2 @@
-[variables]
-NIXPACKS_PKGS = "graphviz"
+[phases.setup]
+nixPkgs = ["graphviz"]
