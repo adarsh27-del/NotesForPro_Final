@@ -11,19 +11,57 @@ import requests
 OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
 
 def ask_openrouter(prompt):
+
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
     }
 
-    data = {
-        "model": "deepseek/deepseek-chat-v3-0324",
-        "messages": [
+    # ---------- TEXT ----------
+    if isinstance(prompt, str):
+
+        messages = [
             {
                 "role": "user",
-                "content": str(prompt)
+                "content": prompt
             }
         ]
+
+    # ---------- IMAGE ----------
+    elif isinstance(prompt, list):
+
+        text = prompt[0]
+
+        image = prompt[1]
+
+        mime = image["mime_type"]
+
+        b64 = base64.b64encode(image["data"]).decode()
+
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": text
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime};base64,{b64}"
+                        }
+                    }
+                ]
+            }
+        ]
+
+    else:
+        raise ValueError("Unsupported prompt type")
+
+    data = {
+        "model": "google/gemini-2.5-flash",
+        "messages": messages
     }
 
     response = requests.post(
@@ -38,8 +76,12 @@ def ask_openrouter(prompt):
 
     response.raise_for_status()
 
-    return response.json()["choices"][0]["message"]["content"]
+    result = response.json()
 
+    if "choices" not in result:
+        raise Exception(result)
+
+    return result["choices"][0]["message"]["content"]
 # ---------------- DASHBOARD ----------------
 
 def dashboard(request):
